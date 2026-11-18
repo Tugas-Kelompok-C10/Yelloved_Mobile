@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yelloved_mobile/menu.dart';
+import 'transactions/transaction_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,15 +8,18 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Yelloved',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+        ),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Home Page'),
+      home: const TransactionPage(),
     );
   }
 }
