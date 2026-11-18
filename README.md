@@ -26,7 +26,7 @@ Yelloved merupakan platform jual beli dan pertukaran barang preloved yang dituju
   Mahasiswa aktif Universitas Indonesia dan kampus sekitar Depok, khususnya anak kos dan mahasiswa yang baru wisuda atau pindah kos dan ingin melepas barang-barangnya, serta mahasiswa lain yang mencari barang kebutuhan kuliah/kos dengan harga terjangkau.
 
 - Masalah apa yang mereka hadapi saat ini?
-  Barang-barang kos, pakaian, dan alat kuliah yang masih layak pakai sering dibuang begitu saja saat wisuda atau pindah kos karena tidak ada wadah jual-beli yang terorganisir khusus lingkup UI. transaksi biasanya tersebar di story Instagram ataupu grup chat/Line/WhatsApp yang riwayatnya cepat tenggelam dan sulit dicari kembali.
+  Barang-barang kos, pakaian, dan alat kuliah yang masih layak pakai sering dibuang begitu saja saat wisuda atau pindah kos karena tidak ada wadah jual-beli yang terorganisir khusus lingkup UI. transaksi biasanya tersebar di story Instagram ataupun grup chat/Line/WhatsApp yang riwayatnya cepat tenggelam dan sulit dicari kembali.
 
 - ⁠Bagaimana aplikasi ini menyelesaikan masalah tersebut?
   Yelloved menyediakan platform terpusat khusus mahasiswa UI dengan fitur Explore Items (pencarian & filter barang) dan Wanted Board (posting kebutuhan barang), sehingga barang preloved lebih mudah ditemukan dan dicocokkan dengan yang membutuhkan.
@@ -96,9 +96,5 @@ Disclosure ini menjelaskan bantuan AI pada pekerjaan.
 
 ### Strategi prompt
 
-#### Cindy
-
 
 ### Keterbatasan AI, koreksi terarah, dan bukti verifikasi
-
-#### Cindy 
