@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -44,6 +45,19 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               icon: const Icon(Icons.push_pin_outlined),
               label: const Text('Wanted Board'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccountProfilePage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.person_outline),
+              label: const Text('Account & Profile'),
             ),
           ],
         ),
