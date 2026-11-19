@@ -85,7 +85,7 @@ Setiap modul Django memiliki app sendiri: `account_profile`, `transactions`, `it
 
 ## AI Disclosure
 
-Disclosure ini menjelaskan bantuan AI pada pekerjaan.
+Disclosure ini menjelaskan bantuan AI pada pekerjaan proyek.
 
 ### Tools dan tujuan penggunaan
 
