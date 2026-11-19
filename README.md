@@ -143,7 +143,7 @@ Pastikan perangkat telah memiliki:
 
 ## AI Disclosure
 
-Disclosure ini menjelaskan bantuan AI pada pekerjaan.
+Disclosure ini menjelaskan bantuan AI pada pekerjaan proyek.
 
 ### Tools dan tujuan penggunaan
 
