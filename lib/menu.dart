@@ -4,6 +4,7 @@ import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
 import 'package:yelloved_mobile/items/items_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
+import 'package:yelloved_mobile/item_matching/item_matching.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -82,6 +83,22 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               icon: const Icon(Icons.receipt_long),
               label: const Text('My Transactions'),
+            ),
+
+            const SizedBox(height: 12),
+
+            // item-matching
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MatchingPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.punch_clock),
+              label: const Text('Item Matching'),
             ),
           ],
         ),
