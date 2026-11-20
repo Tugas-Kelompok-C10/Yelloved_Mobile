@@ -1,6 +1,9 @@
+
 import 'package:flutter/material.dart';
+
 import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
+import 'package:yelloved_mobile/transactions/transaction_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -21,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Give good things another love.',
@@ -31,9 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            
+
             const SizedBox(height: 24),
 
+            // Wanted Board
             FilledButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -46,7 +50,10 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.push_pin_outlined),
               label: const Text('Wanted Board'),
             ),
+
             const SizedBox(height: 12),
+
+            // Account & Profile
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -58,6 +65,22 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               icon: const Icon(Icons.person_outline),
               label: const Text('Account & Profile'),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Payment & Transaction
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.receipt_long),
+              label: const Text('My Transactions'),
             ),
           ],
         ),
