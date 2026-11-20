@@ -1,5 +1,6 @@
+
 import 'package:flutter/material.dart';
-import 'transactions/transaction_page.dart';
+import 'menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const TransactionPage(),
+      home: const MyHomePage(title: 'Yelloved'),
     );
   }
 }
