@@ -23,19 +23,19 @@ Yelloved merupakan platform jual beli dan pertukaran barang preloved yang dituju
 
 ### Value Proposition Questions
 - Siapa target pengguna aplikasi ini?
-  Mahasiswa aktif Universitas Indonesia dan kampus sekitar Depok, khususnya anak kos dan mahasiswa yang baru wisuda atau pindah kos dan ingin melepas barang-barangnya, serta mahasiswa lain yang mencari barang kebutuhan kuliah/kos dengan harga terjangkau.
+  Mahasiswa aktif Universitas Indonesia dan kampus sekitar Depok, khususnya anak kos dan mahasiswa yang baru wisuda atau pindah kos dan ingin melepas barang-barangnya, serta mahasiswa lain yang mencari barang kebutuhan kuliah/kos dengan harga terjangkau.
 
 - Masalah apa yang mereka hadapi saat ini?
-  Barang-barang kos, pakaian, dan alat kuliah yang masih layak pakai sering dibuang begitu saja saat wisuda atau pindah kos karena tidak ada wadah jual-beli yang terorganisir khusus lingkup UI. transaksi biasanya tersebar di story Instagram ataupun grup chat/Line/WhatsApp yang riwayatnya cepat tenggelam dan sulit dicari kembali.
+  Barang-barang kos, pakaian, dan alat kuliah yang masih layak pakai sering dibuang begitu saja saat wisuda atau pindah kos karena tidak ada wadah jual-beli yang terorganisir khusus lingkup UI. transaksi biasanya tersebar di story Instagram ataupun grup chat/Line/WhatsApp yang riwayatnya cepat tenggelam dan sulit dicari kembali.
 
 - ⁠Bagaimana aplikasi ini menyelesaikan masalah tersebut?
-  Yelloved menyediakan platform terpusat khusus mahasiswa UI dengan fitur Explore Items (pencarian & filter barang) dan Wanted Board (posting kebutuhan barang), sehingga barang preloved lebih mudah ditemukan dan dicocokkan dengan yang membutuhkan.
+  Yelloved menyediakan platform terpusat khusus mahasiswa UI dengan fitur Explore Items (pencarian & filter barang) dan Wanted Board (posting kebutuhan barang), sehingga barang preloved lebih mudah ditemukan dan dicocokkan dengan yang membutuhkan.
 
 - Apa manfaat utama yang dirasakan pengguna?
-  Penjual bisa melepas barang dengan cepat ke sesama mahasiswa UI tanpa mubazir, sedangkan pembeli hemat biaya dan tidak perlu beli barang baru — sekaligus mengurangi sampah tekstil dan barang kos yang terbuang.
+  Penjual bisa melepas barang dengan cepat ke sesama mahasiswa UI tanpa mubazir, sedangkan pembeli hemat biaya dan tidak perlu beli barang baru — sekaligus mengurangi sampah tekstil dan barang kos yang terbuang.
 
 - ⁠Kenapa pengguna akan memilih aplikasi ini dibanding alternatif lain?
-  Yelloved fokus khusus pada komunitas UI sehingga transaksi lebih relevan dan dekat secara lokasi (mudah COD sekitar kampus/kos), serta punya fitur Wanted Board yang jarang dimiliki marketplace umum.
+  Yelloved fokus khusus pada komunitas UI sehingga transaksi lebih relevan dan dekat secara lokasi (mudah COD sekitar kampus/kos), serta punya fitur Wanted Board yang jarang dimiliki marketplace umum.
 
 ### Perbandingan dengan Aplikasi Serupa
 
@@ -54,7 +54,7 @@ Yelloved merupakan platform jual beli dan pertukaran barang preloved yang dituju
 | Modul | Deskripsi | PIC |
 |-------|-----------|-----|
 | Account & Profile | Mengelola akun pengguna mulai dari registrasi, login, logout, hingga informasi profil. Pengguna dapat melengkapi profil dan melihat aktivitas mereka di platform, seperti barang yang pernah diposting, wanted post, serta transaksi yang telah diselesaikan. | Adib |
-| Payment & Transaction |  Mengelola proses checkout, pembayaran, dan transaksi barang. Pengguna dapat membuat transaksi, melihat detail dan riwayat transaksi, memperbarui status pembayaran, serta membatalkan transaksi yang masih berjalan. | Dzaky |
+| Payment & Transaction |  Mengelola proses checkout, pembayaran, dan transaksi barang. Pengguna dapat membuat transaksi, melihat detail dan riwayat transaksi, memperbarui status pembayaran, serta membatalkan transaksi yang masih berjalan. | Dzaky |
 | Items Management | Memungkinkan pengguna menawarkan barang yang sudah tidak digunakan tetapi masih layak pakai. Pengguna dapat membuat, mengubah, dan menghapus posting dengan memasukkan informasi barang, foto, kondisi, dan sebagainya. Pemilik juga dapat memperbarui status barang ketika sudah tidak tersedia. | Adyra |
 | Wanted Board | Menyediakan ruang bagi pengguna yang sedang mencari barang tertentu untuk membuat wanted post. Pengguna dapat menjelaskan barang yang dibutuhkan dan informasi tambahan lainnya. Pengguna lain yang memiliki barang yang sesuai dapat memberikan penawaran terhadap wanted post tersebut. | Cindy |
 | Chat | Percakapan pribadi antar pengguna untuk membahas barang, harga, dan lokasi pertemuan. Pengguna dapat mengirim, mengedit, dan menghapus pesan, melampirkan file/gambar, serta melihat preview percakapan dan badge pesan belum dibaca pada ikon chat di bottom navigation. Modul ini juga mendukung notifikasi push untuk pesan baru. | Cindy |
@@ -62,7 +62,91 @@ Yelloved merupakan platform jual beli dan pertukaran barang preloved yang dituju
 
 Setiap modul Django memiliki app sendiri: `account_profile`, `transactions`, `items`, `wanted_board`, `item_matching`, dan `chat`. App `home` menangani halaman utama proyek. Semua app terdaftar di `INSTALLED_APPS` pada `home/settings.py`.
 
+Mobile App & Web App Integration
+
+Yelloved dikembangkan dalam dua bagian, yaitu Web App sebagai backend utama dan Mobile App sebagai aplikasi frontend berbasis Flutter. Kedua aplikasi dirancang untuk saling terhubung melalui REST API.
+
+## Arsitektur Integrasi
+
+Integrasi Web App dan Mobile App menggunakan Django REST Framework (DRF) sebagai penyedia REST API.
+
+- Web App (Backend)
+Web App dibangun menggunakan Django dan bertanggung jawab atas pengelolaan data pengguna, barang, wanted post, serta transaksi. Backend memproses permintaan dari aplikasi dan berinteraksi dengan database.
+
+- REST API
+Django REST Framework digunakan untuk menyediakan akses data dari backend dalam format JSON. API menjadi perantara komunikasi antara Web App dan Mobile App.
+
+- Mobile App (Frontend)
+Mobile App dikembangkan menggunakan Flutter dan Dart. Aplikasi ini berfungsi sebagai antarmuka bagi pengguna untuk mengakses fitur-fitur Yelloved melalui perangkat mobile.
+
+## Alur Komunikasi Web App dan Mobile App
+
+Alur komunikasi antara kedua aplikasi dirancang sebagai berikut:
+1. Pengguna membuka aplikasi Yelloved melalui Mobile App.
+2. Mobile App mengirimkan HTTP request ke REST API pada Web App.
+3. Django REST Framework menerima dan memproses request.
+4. Backend mengambil data yang diminta dari database sesuai dengan hak akses pengguna
+5. Backend mengirimkan respons dalam format JSON kepada Mobile App.
+6. Flutter menerima respons dan mengolah data JSON menjadi objek menggunakan model Dart.
+7. Data yang diterima ditampilkan pada antarmuka Mobile App.
+
+## REST API Transaksi
+Salah satu endpoint yang telah disediakan pada Web App adalah endpoint untuk mengambil daftar transaksi pengguna.
+
+Method : GET
+Endpoint: /transactions/api/
+Deskripsi: Mengambil daftar transaksi milik pengguna yang sedang terautentikasi.
+
+Endpoint tersebut menggunakan permission IsAuthenticated, sehingga hanya pengguna yang telah terautentikasi yang dapat mengakses data transaksi.
+
+## Teknologi yang Digunakan
+
+Web App (Backend)
+- Django
+- Django REST Framework
+
+Mobile App (Frontend)
+- Flutter
+- Dart
+
+Komunikasi Data
+- HTTP Client menggunakan package http
+- JSON sebagai format pertukaran data
+
 ## Setup dan Menjalankan Proyek
+Pastikan perangkat telah memiliki:
+- Python
+- Django
+- Flutter SDK
+- Dart SDK
+- Git
+- Google Chrome (untuk menjalankan Flutter Web)
+
+### Menjalankan aplikasi mobile dengan backend DRF
+
+Modul Account & Profile memakai endpoint JSON berikut sebagai default:
+
+- `POST /api/account/register/` dengan `first_name`, `last_name`, `email`, dan `password`.
+- `POST /api/account/login/` dengan `email` dan `password`; respons token dapat memakai key `token`, `key` (DRF TokenAuthentication), atau `access` (Bearer/JWT).
+- `GET` dan `PATCH /api/account/profile/` memakai header autentikasi dan data `first_name` serta `last_name`.
+
+Jalankan aplikasi dengan URL backend yang dapat dijangkau perangkat/emulator:
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://alamat-backend-kamu
+```
+
+Path default bisa dioverride jika URL backend berbeda:
+
+```bash
+flutter run \
+  --dart-define=API_BASE_URL=https://alamat-backend-kamu \
+  --dart-define=API_REGISTER_PATH=/path/register/ \
+  --dart-define=API_LOGIN_PATH=/path/login/ \
+  --dart-define=API_PROFILE_PATH=/path/profile/
+```
+
+Kontrak di atas adalah asumsi Flutter karena source backend dan URL DRF belum ada di repo mobile ini. Samakan field, path, dan format token dengan serializer/view DRF sebelum dipakai. Token hanya disimpan selama aplikasi berjalan.
 
 
 
@@ -85,7 +169,7 @@ Setiap modul Django memiliki app sendiri: `account_profile`, `transactions`, `it
 
 ## AI Disclosure
 
-Disclosure ini menjelaskan bantuan AI pada pekerjaan.
+Disclosure ini menjelaskan bantuan AI pada pekerjaan proyek.
 
 ### Tools dan tujuan penggunaan
 
@@ -97,4 +181,3 @@ Disclosure ini menjelaskan bantuan AI pada pekerjaan.
 ### Strategi prompt
 
 
-### Keterbatasan AI, koreksi terarah, dan bukti verifikasi
