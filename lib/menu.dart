@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
 import 'package:yelloved_mobile/items/items_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
+import 'package:yelloved_mobile/theme/app_colors.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -27,12 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _selectedIndex == 0
-          ? AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: Text(widget.title),
-            )
-          : null,
+      appBar: _selectedIndex == 0 ? AppBar(title: Text(widget.title)) : null,
       // Keep each page mounted so switching tabs preserves its form/scroll state.
       body: IndexedStack(
         index: _selectedIndex,
@@ -43,31 +40,53 @@ class _MyHomePageState extends State<MyHomePage> {
           const AccountProfilePage(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _selectTab,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.storefront_outlined),
-            selectedIcon: Icon(Icons.storefront),
-            label: 'Catalogue',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.push_pin_outlined),
-            selectedIcon: Icon(Icons.push_pin),
-            label: 'Wanted Board',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: DecoratedBox(
+        decoration: const BoxDecoration(gradient: AppColors.gradient),
+        child: NavigationBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _selectTab,
+          destinations: [
+            const NavigationDestination(
+              icon: Icon(CupertinoIcons.house, size: 24),
+              label: 'Home',
+            ),
+            const NavigationDestination(
+              icon: Icon(CupertinoIcons.square_list, size: 24),
+              label: 'Catalogue',
+            ),
+            NavigationDestination(
+              icon: Transform.rotate(
+                angle: 0.65,
+                child: const Icon(CupertinoIcons.pin, size: 24),
+              ),
+              label: 'Wanted Board',
+            ),
+            NavigationDestination(
+              icon: Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.blue,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.text, width: 1.5),
+                ),
+                child: const Text(
+                  'U',
+                  style: TextStyle(
+                    color: AppColors.violet,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

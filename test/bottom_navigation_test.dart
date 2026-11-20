@@ -13,7 +13,10 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byType(NavigationBar),
-          matching: find.text(label),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is NavigationDestination && widget.label == label,
+          ),
         ),
       );
       await tester.pumpAndSettle();
