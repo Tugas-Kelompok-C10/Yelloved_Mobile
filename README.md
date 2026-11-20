@@ -122,6 +122,32 @@ Pastikan perangkat telah memiliki:
 - Git
 - Google Chrome (untuk menjalankan Flutter Web)
 
+### Menjalankan aplikasi mobile dengan backend DRF
+
+Modul Account & Profile memakai endpoint JSON berikut sebagai default:
+
+- `POST /api/account/register/` dengan `first_name`, `last_name`, `email`, dan `password`.
+- `POST /api/account/login/` dengan `email` dan `password`; respons token dapat memakai key `token`, `key` (DRF TokenAuthentication), atau `access` (Bearer/JWT).
+- `GET` dan `PATCH /api/account/profile/` memakai header autentikasi dan data `first_name` serta `last_name`.
+
+Jalankan aplikasi dengan URL backend yang dapat dijangkau perangkat/emulator:
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://alamat-backend-kamu
+```
+
+Path default bisa dioverride jika URL backend berbeda:
+
+```bash
+flutter run \
+  --dart-define=API_BASE_URL=https://alamat-backend-kamu \
+  --dart-define=API_REGISTER_PATH=/path/register/ \
+  --dart-define=API_LOGIN_PATH=/path/login/ \
+  --dart-define=API_PROFILE_PATH=/path/profile/
+```
+
+Kontrak di atas adalah asumsi Flutter karena source backend dan URL DRF belum ada di repo mobile ini. Samakan field, path, dan format token dengan serializer/view DRF sebelum dipakai. Token hanya disimpan selama aplikasi berjalan.
+
 
 
 ## Sumber Dataset / Public API
