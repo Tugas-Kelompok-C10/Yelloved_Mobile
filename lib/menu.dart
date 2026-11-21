@@ -1,7 +1,8 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
+import 'package:yelloved_mobile/core/app_session.dart';
+import 'package:yelloved_mobile/items/items_page.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
 
@@ -17,6 +18,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    final session = AppSessionScope.of(context);
+    final profile = session.profile ?? const <String, dynamic>{};
+    final fallbackName =
+        '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'.trim();
+    final accountName = profile['name']?.toString() ?? fallbackName;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -29,13 +35,15 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'Give good things another love.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 24),
+
+            if (session.isAuthenticated) ...[
+              Text('Signed in${accountName.isEmpty ? '' : ' as $accountName'}'),
+              const SizedBox(height: 16),
+            ],
 
             // Wanted Board
             FilledButton.icon(
@@ -81,6 +89,19 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               icon: const Icon(Icons.receipt_long),
               label: const Text('My Transactions'),
+            ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ItemsPage()),
+                );
+              },
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: const Text('Items'),
             ),
           ],
         ),

@@ -1,9 +1,10 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../core/account_profile_action.dart';
+import '../core/app_session.dart';
 import '../models/transaction.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -14,27 +15,35 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  Future<List<Transaction>> fetchTransactions() async {
-    final url = Uri.parse(
-      'http://127.0.0.1:8000/transactions/api/',
-    );
+  static const _baseUrl = String.fromEnvironment('API_BASE_URL');
+  static const _transactionsPath = String.fromEnvironment(
+    'API_TRANSACTIONS_PATH',
+    defaultValue: '/transactions/api/',
+  );
 
-    final response = await http.get(url);
+  Future<List<Transaction>> fetchTransactions(AppSession session) async {
+    if (_baseUrl.isEmpty) {
+      throw Exception('Atur URL backend dengan --dart-define=API_BASE_URL=...');
+    }
+    final url = Uri.parse(_baseUrl).resolve(_transactionsPath);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        if (session.authorizationHeader != null)
+          'Authorization': session.authorizationHeader!,
+      },
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
 
-      return data
-          .map((json) => Transaction.fromJson(json))
-          .toList();
+      return data.map((json) => Transaction.fromJson(json)).toList();
     } else if (response.statusCode == 403) {
-      throw Exception(
-        'Akses ditolak. Pengguna belum terautentikasi.',
-      );
+      throw Exception('Akses ditolak. Pengguna belum terautentikasi.');
     } else {
-      throw Exception(
-        'Gagal mengambil transaksi: ${response.statusCode}',
-      );
+      throw Exception('Gagal mengambil transaksi: ${response.statusCode}');
     }
   }
 
@@ -44,54 +53,72 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final session = AppSessionScope.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Transactions'),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
+        actions: const [AccountProfileAction()],
       ),
-      body: FutureBuilder<List<Transaction>>(
-        future: fetchTransactions(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
+      body: !session.isAuthenticated
+          ? Center(
               child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  snapshot.error.toString(),
-                  textAlign: TextAlign.center,
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Sign in to view your transactions.'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/account').then((_) {
+                            if (mounted) setState(() {});
+                          }),
+                      child: const Text('Go to account'),
+                    ),
+                  ],
                 ),
               ),
-            );
-          }
+            )
+          : FutureBuilder<List<Transaction>>(
+              future: fetchTransactions(session),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          final transactions = snapshot.data ?? [];
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        snapshot.error.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
 
-          if (transactions.isEmpty) {
-            return const Center(
-              child: Text('Belum ada transaksi.'),
-            );
-          }
+                final transactions = snapshot.data ?? [];
 
-          return ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: transactions.length,
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
+                if (transactions.isEmpty) {
+                  return const Center(child: Text('Belum ada transaksi.'));
+                }
 
-              return transactionCard(transaction);
-            },
-          );
-        },
-      ),
+                return ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: transactions.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final transaction = transactions[index];
+
+                    return transactionCard(transaction);
+                  },
+                );
+              },
+            ),
     );
   }
 
@@ -107,10 +134,7 @@ class _TransactionPageState extends State<TransactionPage> {
           children: [
             Text(
               transaction.itemName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text('Transaction ID: ${transaction.orderId}'),

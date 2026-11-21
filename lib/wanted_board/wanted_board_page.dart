@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yelloved_mobile/core/account_profile_action.dart';
 
 class WantedBoardPage extends StatelessWidget {
   const WantedBoardPage({super.key});
@@ -8,6 +9,7 @@ class WantedBoardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Wanted Board'),
+        actions: const [AccountProfileAction()],
       ),
       body: const Padding(
         padding: EdgeInsets.all(16),
@@ -16,10 +18,7 @@ class WantedBoardPage extends StatelessWidget {
           children: [
             Text(
               'Looking for something?',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text('Post what you need and let the community help you find it.'),
