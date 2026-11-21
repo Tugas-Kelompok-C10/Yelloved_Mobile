@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
+import 'package:yelloved_mobile/core/api_config.dart';
 
 import 'wanted_post.dart';
 
@@ -14,10 +15,7 @@ import 'wanted_post.dart';
 class WantedApi {
   WantedApi({
     http.Client? client,
-    String baseUrl = const String.fromEnvironment(
-      'API_BASE_URL',
-      defaultValue: 'https://cindy-olivia-yelloved.pws.cs.ui.ac.id',
-    ),
+    String baseUrl = ApiConfig.baseUrl,
     this.timeout = const Duration(seconds: 15),
   }) : _client = client ?? http.Client(),
        _ownsClient = client == null,

@@ -126,31 +126,47 @@ Pastikan perangkat telah memiliki:
 
 Modul Account & Profile memakai endpoint JSON berikut sebagai default:
 
-- `POST /api/account/register/` dengan `first_name`, `last_name`, `email`, dan `password`.
-- `POST /api/account/login/` dengan `email` dan `password`; respons token dapat memakai key `token`, `key` (DRF TokenAuthentication), atau `access` (Bearer/JWT).
-- `GET` dan `PATCH /api/account/profile/` memakai header autentikasi dan data `first_name` serta `last_name`.
+- `POST /account/api/mobile/register/` dengan `first_name`, `email`, dan `password`.
+- `POST /account/api/mobile/login/` dengan `email` dan `password`; respons DRF mengembalikan `token`.
+- `GET` dan `PATCH /account/api/mobile/profile/` memakai `Authorization: Token <token>`.
+- `POST /account/api/mobile/logout/` menghapus token pada server.
 - Token login disimpan di sesi aplikasi dan dipakai bersama oleh Account & Profile serta Transactions. Sesi hilang saat aplikasi ditutup.
 - Transactions memakai `GET /transactions/api/` dan mengirim token yang sama. Override path dengan `API_TRANSACTIONS_PATH` jika backend memakai URL berbeda.
 - Kartu aktivitas di profil membuka halaman Items, Wanted Board, dan Transactions. Items dan Wanted Board saat ini masih berupa UI, belum mengambil data DRF.
 
-Jalankan aplikasi dengan URL backend yang dapat dijangkau perangkat/emulator:
+Alamat default API adalah `https://cindy-olivia-yelloved.pws.cs.ui.ac.id`, sama dengan website Yelloved. Jalankan Flutter seperti biasa untuk memakai URL tersebut:
 
 ```bash
-flutter run --dart-define=API_BASE_URL=https://alamat-backend-kamu
+flutter run
+```
+
+Untuk pengembangan lokal, install dependency dan jalankan backend dari folder Django:
+
+```bash
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
+```
+
+Lalu, untuk Android Emulator, jalankan Flutter dari folder mobile dengan alamat host emulator `10.0.2.2`:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
 ```
 
 Path default bisa dioverride jika URL backend berbeda:
 
 ```bash
 flutter run \
-  --dart-define=API_BASE_URL=https://alamat-backend-kamu \
-  --dart-define=API_REGISTER_PATH=/path/register/ \
-  --dart-define=API_LOGIN_PATH=/path/login/ \
-  --dart-define=API_PROFILE_PATH=/path/profile/ \
-  --dart-define=API_TRANSACTIONS_PATH=/path/transactions/
+  --dart-define=API_BASE_URL=http://10.0.2.2:8000 \
+  --dart-define=API_REGISTER_PATH=/account/api/mobile/register/ \
+  --dart-define=API_LOGIN_PATH=/account/api/mobile/login/ \
+  --dart-define=API_PROFILE_PATH=/account/api/mobile/profile/ \
+  --dart-define=API_LOGOUT_PATH=/account/api/mobile/logout/ \
+  --dart-define=API_TRANSACTIONS_PATH=/transactions/api/
 ```
 
-Kontrak di atas adalah asumsi Flutter karena source backend dan URL DRF belum ada di repo mobile ini. Samakan field, path, dan format token dengan serializer/view DRF sebelum dipakai. Token hanya disimpan selama aplikasi berjalan.
+Endpoint Account & Profile dan daftar transaksi menggunakan token DRF. Backend lokal perlu meng-install dependency dan menjalankan migrasi token. Perubahan endpoint DRF juga perlu di-deploy ke website sebelum tersedia di URL publik. Token hanya disimpan selama aplikasi berjalan. Untuk Chrome/iOS atau perangkat fisik saat memakai backend lokal, gunakan URL backend yang dapat dijangkau platform tersebut.
 
 
 

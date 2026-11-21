@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'account_profile/account_profile_page.dart';
 import 'core/app_session.dart';
 import 'menu.dart';
-import 'theme/app_theme.dart';
 
 void main() {
   runApp(AppSessionScope(session: AppSession(), child: const MyApp()));

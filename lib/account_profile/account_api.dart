@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:yelloved_mobile/core/api_config.dart';
 import 'package:yelloved_mobile/core/app_session.dart';
 
 /// Configure with --dart-define=API_BASE_URL=http://... and override the
@@ -10,18 +11,22 @@ class AccountApi {
   AccountApi({required this.session, http.Client? client})
     : _client = client ?? http.Client();
 
-  static const baseUrl = String.fromEnvironment('API_BASE_URL');
+  static const baseUrl = ApiConfig.baseUrl;
   static const registerPath = String.fromEnvironment(
     'API_REGISTER_PATH',
-    defaultValue: '/api/account/register/',
+    defaultValue: '/account/api/mobile/register/',
   );
   static const loginPath = String.fromEnvironment(
     'API_LOGIN_PATH',
-    defaultValue: '/api/account/login/',
+    defaultValue: '/account/api/mobile/login/',
   );
   static const profilePath = String.fromEnvironment(
     'API_PROFILE_PATH',
-    defaultValue: '/api/account/profile/',
+    defaultValue: '/account/api/mobile/profile/',
+  );
+  static const logoutPath = String.fromEnvironment(
+    'API_LOGOUT_PATH',
+    defaultValue: '/account/api/mobile/logout/',
   );
 
   final http.Client _client;
@@ -32,20 +37,15 @@ class AccountApi {
     required String email,
     required String password,
   }) async {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    final firstName = parts.first;
-    final lastName = parts.length > 1 ? parts.skip(1).join(' ') : '';
-    final data = await _send(
+    return _send(
       'POST',
       registerPath,
       body: {
-        'first_name': firstName,
-        'last_name': lastName,
+        'first_name': name.trim(),
         'email': email.trim(),
         'password': password,
       },
     );
-    return data;
   }
 
   Future<void> login({required String email, required String password}) async {
@@ -62,7 +62,9 @@ class AccountApi {
     }
     session.signIn(
       token: token,
-      usesTokenAuth: data.containsKey('key') && !data.containsKey('access'),
+      usesTokenAuth:
+          data.containsKey('token') ||
+          (data.containsKey('key') && !data.containsKey('access')),
     );
   }
 
@@ -87,7 +89,12 @@ class AccountApi {
       'PATCH',
       profilePath,
       authenticated: true,
-      body: {'first_name': firstName, 'last_name': lastName},
+      body: {
+        'first_name': [
+          firstName,
+          lastName,
+        ].where((part) => part.isNotEmpty).join(' '),
+      },
     );
     final profile = data['user'] ?? data['profile'] ?? data;
     if (profile is! Map) {
@@ -100,7 +107,17 @@ class AccountApi {
     return result;
   }
 
-  void logout() => session.signOut();
+  Future<void> logout() async {
+    try {
+      if (session.isAuthenticated) {
+        await _send('POST', logoutPath, authenticated: true);
+      }
+    } catch (_) {
+      // Always clear the local session even if the network is unavailable.
+    } finally {
+      session.signOut();
+    }
+  }
 
   void close() => _client.close();
 

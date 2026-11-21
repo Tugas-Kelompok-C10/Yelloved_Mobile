@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
 import 'package:yelloved_mobile/core/app_session.dart';
@@ -6,7 +7,6 @@ import 'package:yelloved_mobile/items/items_page.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
 import 'package:yelloved_mobile/theme/app_colors.dart';
-import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 import 'package:yelloved_mobile/item_matching/item_matching.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -30,11 +30,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final session = AppSessionScope.of(context);
-    final profile = session.profile ?? const <String, dynamic>{};
-    final fallbackName =
-        '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'.trim();
-    final accountName = profile['name']?.toString() ?? fallbackName;
     return Scaffold(
       appBar: _selectedIndex == 0 ? AppBar(title: Text(widget.title)) : null,
       // Keep each page mounted so switching tabs preserves its form/scroll state.
@@ -99,6 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildHome() {
+    final session = AppSessionScope.of(context);
+    final profile = session.profile ?? const <String, dynamic>{};
+    final fallbackName =
+        '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'.trim();
+    final accountName = profile['name']?.toString() ?? fallbackName;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -156,9 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const MatchingPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const MatchingPage()),
                 );
               },
               icon: const Icon(Icons.punch_clock),
