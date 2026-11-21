@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import 'package:yelloved_mobile/account_profile/account_profile_page.dart';
+import 'package:yelloved_mobile/core/app_session.dart';
 import 'package:yelloved_mobile/items/items_page.dart';
+import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
 import 'package:yelloved_mobile/theme/app_colors.dart';
 import 'package:yelloved_mobile/wanted_board/wanted_board_page.dart';
@@ -29,6 +30,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final session = AppSessionScope.of(context);
+    final profile = session.profile ?? const <String, dynamic>{};
+    final fallbackName =
+        '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'.trim();
+    final accountName = profile['name']?.toString() ?? fallbackName;
     return Scaffold(
       appBar: _selectedIndex == 0 ? AppBar(title: Text(widget.title)) : null,
       // Keep each page mounted so switching tabs preserves its form/scroll state.
@@ -105,6 +111,13 @@ class _MyHomePageState extends State<MyHomePage> {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
+
+            if (session.isAuthenticated) ...[
+              Text('Signed in${accountName.isEmpty ? '' : ' as $accountName'}'),
+              const SizedBox(height: 16),
+            ],
+
+            // Wanted Board
             FilledButton.icon(
               onPressed: () => _selectTab(2),
               icon: const Icon(Icons.push_pin_outlined),
@@ -150,6 +163,19 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               icon: const Icon(Icons.punch_clock),
               label: const Text('Item Matching'),
+            ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ItemsPage()),
+                );
+              },
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: const Text('Items'),
             ),
           ],
         ),

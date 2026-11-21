@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:yelloved_mobile/core/app_session.dart';
 
 /// Configure with --dart-define=API_BASE_URL=http://... and override the
 /// endpoint paths with API_REGISTER_PATH, API_LOGIN_PATH, and API_PROFILE_PATH
 /// when the Django project uses different routes.
 class AccountApi {
-  AccountApi({http.Client? client}) : _client = client ?? http.Client();
+  AccountApi({required this.session, http.Client? client})
+    : _client = client ?? http.Client();
 
   static const baseUrl = String.fromEnvironment('API_BASE_URL');
   static const registerPath = String.fromEnvironment(
@@ -23,8 +25,7 @@ class AccountApi {
   );
 
   final http.Client _client;
-  String? _token;
-  bool _usesTokenAuth = false;
+  final AppSession session;
 
   Future<Map<String, dynamic>> register({
     required String name,
@@ -59,17 +60,23 @@ class AccountApi {
         'Login response tidak berisi token (token, key, atau access).',
       );
     }
-    _token = token;
-    _usesTokenAuth = data.containsKey('key') && !data.containsKey('access');
+    session.signIn(
+      token: token,
+      usesTokenAuth: data.containsKey('key') && !data.containsKey('access'),
+    );
   }
 
   Future<Map<String, dynamic>> getProfile() async {
     final data = await _send('GET', profilePath, authenticated: true);
     final profile = data['user'] ?? data['profile'] ?? data;
     if (profile is! Map) {
-      throw const AccountApiException('Format data profil dari server tidak valid.');
+      throw const AccountApiException(
+        'Format data profil dari server tidak valid.',
+      );
     }
-    return Map<String, dynamic>.from(profile);
+    final result = Map<String, dynamic>.from(profile);
+    session.updateProfile(result);
+    return result;
   }
 
   Future<Map<String, dynamic>> updateProfile({
@@ -84,12 +91,16 @@ class AccountApi {
     );
     final profile = data['user'] ?? data['profile'] ?? data;
     if (profile is! Map) {
-      throw const AccountApiException('Format data profil dari server tidak valid.');
+      throw const AccountApiException(
+        'Format data profil dari server tidak valid.',
+      );
     }
-    return Map<String, dynamic>.from(profile);
+    final result = Map<String, dynamic>.from(profile);
+    session.updateProfile(result);
+    return result;
   }
 
-  void logout() => _token = null;
+  void logout() => session.signOut();
 
   void close() => _client.close();
 
@@ -104,7 +115,7 @@ class AccountApi {
         'URL backend belum diatur. Jalankan app dengan --dart-define=API_BASE_URL=... ',
       );
     }
-    if (authenticated && _token == null) {
+    if (authenticated && session.authorizationHeader == null) {
       throw const AccountApiException('Silakan login kembali.');
     }
 
@@ -112,14 +123,18 @@ class AccountApi {
     final headers = <String, String>{'Accept': 'application/json'};
     if (body != null) headers['Content-Type'] = 'application/json';
     if (authenticated) {
-      headers['Authorization'] = '${_usesTokenAuth ? 'Token' : 'Bearer'} $_token';
+      headers['Authorization'] = session.authorizationHeader!;
     }
     final encodedBody = body == null ? null : jsonEncode(body);
     final response = switch (method) {
       'GET' => await _client.get(uri, headers: headers),
       'POST' => await _client.post(uri, headers: headers, body: encodedBody),
       'PATCH' => await _client.patch(uri, headers: headers, body: encodedBody),
-      _ => throw ArgumentError.value(method, 'method', 'Unsupported HTTP method'),
+      _ => throw ArgumentError.value(
+        method,
+        'method',
+        'Unsupported HTTP method',
+      ),
     };
     final decoded = _decodeResponse(response);
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -136,12 +151,15 @@ class AccountApi {
       if (decoded is Map) return Map<String, dynamic>.from(decoded);
       return <String, dynamic>{'data': decoded};
     } on FormatException {
-      throw const AccountApiException('Server mengirim respons yang bukan JSON.');
+      throw const AccountApiException(
+        'Server mengirim respons yang bukan JSON.',
+      );
     }
   }
 
   String _errorMessage(Map<String, dynamic> data, int statusCode) {
-    final detail = data['detail'] ?? data['message'] ?? data['non_field_errors'];
+    final detail =
+        data['detail'] ?? data['message'] ?? data['non_field_errors'];
     if (detail is List) return detail.join('\n');
     if (detail is String) return detail;
     final fieldError = data.entries

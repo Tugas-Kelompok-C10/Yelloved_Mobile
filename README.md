@@ -129,6 +129,9 @@ Modul Account & Profile memakai endpoint JSON berikut sebagai default:
 - `POST /api/account/register/` dengan `first_name`, `last_name`, `email`, dan `password`.
 - `POST /api/account/login/` dengan `email` dan `password`; respons token dapat memakai key `token`, `key` (DRF TokenAuthentication), atau `access` (Bearer/JWT).
 - `GET` dan `PATCH /api/account/profile/` memakai header autentikasi dan data `first_name` serta `last_name`.
+- Token login disimpan di sesi aplikasi dan dipakai bersama oleh Account & Profile serta Transactions. Sesi hilang saat aplikasi ditutup.
+- Transactions memakai `GET /transactions/api/` dan mengirim token yang sama. Override path dengan `API_TRANSACTIONS_PATH` jika backend memakai URL berbeda.
+- Kartu aktivitas di profil membuka halaman Items, Wanted Board, dan Transactions. Items dan Wanted Board saat ini masih berupa UI, belum mengambil data DRF.
 
 Jalankan aplikasi dengan URL backend yang dapat dijangkau perangkat/emulator:
 
@@ -143,7 +146,8 @@ flutter run \
   --dart-define=API_BASE_URL=https://alamat-backend-kamu \
   --dart-define=API_REGISTER_PATH=/path/register/ \
   --dart-define=API_LOGIN_PATH=/path/login/ \
-  --dart-define=API_PROFILE_PATH=/path/profile/
+  --dart-define=API_PROFILE_PATH=/path/profile/ \
+  --dart-define=API_TRANSACTIONS_PATH=/path/transactions/
 ```
 
 Kontrak di atas adalah asumsi Flutter karena source backend dan URL DRF belum ada di repo mobile ini. Samakan field, path, dan format token dengan serializer/view DRF sebelum dipakai. Token hanya disimpan selama aplikasi berjalan.
