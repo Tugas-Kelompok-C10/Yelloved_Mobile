@@ -6,9 +6,7 @@ class MatchingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Item Matching & Exchange'),
-      ),
+      appBar: AppBar(title: const Text('Item Matching & Exchange')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -16,15 +14,14 @@ class MatchingPage extends StatelessWidget {
           children: [
             const Text(
               'Aktivitas Matching Anda',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text('Kelola request barang dan penawaran tukar tambah di sini.'),
+            const Text(
+              'Kelola request barang dan penawaran tukar tambah di sini.',
+            ),
             const SizedBox(height: 24),
-            
+
             // Contoh Card Item Request Masuk
             Card(
               elevation: 2,

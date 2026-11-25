@@ -1,4 +1,3 @@
-
 class Transaction {
   final int id;
   final String orderId;
@@ -26,9 +25,7 @@ class Transaction {
       orderId: json['order_id'] ?? '',
       itemName: json['item_name'] ?? '',
       quantity: json['quantity'] ?? 0,
-      totalAmount: double.parse(
-        json['total_amount'].toString(),
-      ),
+      totalAmount: double.parse(json['total_amount'].toString()),
       paymentMethod: json['payment_method'] ?? '',
       paymentStatus: json['payment_status'] ?? '',
       transactionStatus: json['transaction_status'] ?? '',

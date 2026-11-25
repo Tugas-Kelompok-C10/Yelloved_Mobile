@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yelloved_mobile/account_profile/account_api.dart';
+import 'package:yelloved_mobile/account_profile/addresses_page.dart';
+import 'package:yelloved_mobile/account_profile/change_password_page.dart';
+import 'package:yelloved_mobile/account_profile/edit_profile_page.dart';
+import 'package:yelloved_mobile/account_profile/payment_methods_page.dart';
 import 'package:yelloved_mobile/core/app_session.dart';
 import 'package:yelloved_mobile/items/items_page.dart';
 import 'package:yelloved_mobile/transactions/transaction_page.dart';
@@ -100,62 +104,19 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
     return combined.isEmpty ? _emailController.text.split('@').first : combined;
   }
 
-  Future<void> _editProfile() async {
-    final name = TextEditingController(text: _profileName ?? '');
-    final formKey = GlobalKey<FormState>();
-    final saved = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit profile'),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: name,
-            decoration: const InputDecoration(labelText: 'Full name'),
-            validator: (value) => value == null || value.trim().isEmpty
-                ? 'Nama wajib diisi'
-                : null,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                Navigator.pop(context, true);
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+  Future<void> _openPage(Widget page) async {
+    setState(() => _error = null);
+    await Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(builder: (_) => page),
     );
-    if (saved == true && mounted) {
-      final parts = name.text.trim().split(RegExp(r'\s+'));
+    final profile = _session.profile;
+    if (mounted && profile != null) {
       setState(() {
-        _loading = true;
-        _error = null;
+        _profileName = _readName(profile);
+        _profileEmail = profile['email']?.toString() ?? _profileEmail;
       });
-      try {
-        final profile = await _api.updateProfile(
-          firstName: parts.first,
-          lastName: parts.length > 1 ? parts.skip(1).join(' ') : '',
-        );
-        if (mounted) setState(() => _profileName = _readName(profile));
-      } on AccountApiException catch (error) {
-        if (mounted) setState(() => _error = error.message);
-      } catch (error) {
-        if (mounted) {
-          setState(() => _error = 'Tidak dapat terhubung ke server: $error');
-        }
-      } finally {
-        if (mounted) setState(() => _loading = false);
-      }
     }
-    name.dispose();
   }
 
   Future<void> _logout() async {
@@ -313,6 +274,7 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
         .take(2)
         .map((part) => part[0].toUpperCase())
         .join();
+    final photo = _session.profile?['photo']?.toString();
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -330,6 +292,9 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
               children: [
                 CircleAvatar(
                   radius: 38,
+                  foregroundImage: photo == null || photo.isEmpty
+                      ? null
+                      : NetworkImage(photo),
                   child: Text(initials, style: const TextStyle(fontSize: 24)),
                 ),
                 const SizedBox(height: 12),
@@ -342,13 +307,40 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
                 Text(_profileEmail ?? ''),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed: _loading ? null : _editProfile,
+                  onPressed: _loading
+                      ? null
+                      : () => _openPage(EditProfilePage(api: _api)),
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('Edit profile'),
                 ),
               ],
             ),
           ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Account settings',
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        _SettingsTile(
+          icon: Icons.location_on_outlined,
+          title: 'My addresses',
+          subtitle: 'Delivery and meet-up addresses',
+          onTap: () => _openPage(AddressesPage(api: _api)),
+        ),
+        _SettingsTile(
+          icon: Icons.account_balance_wallet_outlined,
+          title: 'Payment methods',
+          subtitle: 'Bank accounts and e-wallets',
+          onTap: () => _openPage(PaymentMethodsPage(api: _api)),
+        ),
+        _SettingsTile(
+          icon: Icons.lock_outline,
+          title: 'Change password',
+          subtitle: 'Keep your account secure',
+          onTap: () => _openPage(ChangePasswordPage(api: _api)),
         ),
         const SizedBox(height: 20),
         Text(
@@ -404,6 +396,31 @@ class _ActivityTile extends StatelessWidget {
         context,
         MaterialPageRoute<void>(builder: (_) => page),
       ),
+    ),
+  );
+}
+
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Card(
+    child: ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
     ),
   );
 }
