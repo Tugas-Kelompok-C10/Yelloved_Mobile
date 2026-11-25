@@ -16,10 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Yelloved',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light,
       routes: {'/account': (_) => const AccountProfilePage()},
       home: const MyHomePage(title: 'Yelloved'),
     );
