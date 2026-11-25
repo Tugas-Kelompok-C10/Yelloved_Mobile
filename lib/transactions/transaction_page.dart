@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../core/account_profile_action.dart';
+import '../core/api_config.dart';
 import '../core/app_session.dart';
 import '../models/transaction.dart';
 
@@ -15,7 +16,7 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  static const _baseUrl = String.fromEnvironment('API_BASE_URL');
+  static const _baseUrl = ApiConfig.baseUrl;
   static const _transactionsPath = String.fromEnvironment(
     'API_TRANSACTIONS_PATH',
     defaultValue: '/transactions/api/',

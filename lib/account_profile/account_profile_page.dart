@@ -158,8 +158,9 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
     name.dispose();
   }
 
-  void _logout() {
-    _api.logout();
+  Future<void> _logout() async {
+    await _api.logout();
+    if (!mounted) return;
     setState(() {
       _profileName = null;
       _profileEmail = null;
