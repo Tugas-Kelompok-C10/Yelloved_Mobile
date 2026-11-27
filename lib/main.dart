@@ -1,11 +1,9 @@
+
 import 'package:flutter/material.dart';
-import 'theme/app_theme.dart';
-import 'account_profile/account_profile_page.dart';
-import 'core/app_session.dart';
-import 'menu.dart';
+import 'account_profile/login_page.dart';
 
 void main() {
-  runApp(AppSessionScope(session: AppSession(), child: const MyApp()));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,9 +14,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Yelloved',
-      theme: AppTheme.light,
-      routes: {'/account': (_) => const AccountProfilePage()},
-      home: const MyHomePage(title: 'Yelloved'),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+        ),
+        useMaterial3: true,
+      ),
+      home: const LoginPage(),
     );
   }
 }
